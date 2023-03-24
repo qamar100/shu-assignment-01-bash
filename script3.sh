@@ -10,3 +10,27 @@
 #+  8) The script changes the default shell from "sh" to "bash".
 #+  9) The scrit echoes success message if the user is created.
 #+  10) The scrit echoes error message if the user is not created. 
+
+if [[ $UID -ne 0 ]]
+then
+    echo "User is not Root."
+    exit 1
+fi
+echo "Enter the user name: "
+read user
+
+if id -u $user >/dev/null 
+then
+	echo user already exist
+	exit 1
+else
+	if $(useradd -m -p $(openssl passwd -1 110110) $user)
+	then
+		$(usermod -aG sudo $user)
+		$(usermod -s /bin/bash $user)
+		echo "Success the user is created."
+	else
+		echo "User is not created."
+	fi
+fi
+

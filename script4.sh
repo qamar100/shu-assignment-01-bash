@@ -14,3 +14,35 @@
 #+  7) The script adds files to staging area.
 #+  8) The script commits the changes with commit message provided in parameter.
 #+  9) The script echoes the commit hash and author name.
+
+if [[ $UID -ne 0 ]]
+then
+    echo "User is not Root."
+    exit 1
+fi
+
+git status >/dev/null 2>&1
+
+if (( $? == 0))
+then
+	echo "Already a git repository"
+
+    else
+    echo "The current directory is not a git repository"
+    exit 1
+fi
+
+echo "Enter commit message: "
+read comm
+
+if [ -z "$comm" ]
+then 
+	echo "Parameter is not provided."
+	exit 1
+fi
+
+git init >/dev/null 2>&1
+git add .
+git commit -m $comm >/dev/null 2>&1
+echo "Hash :" $(git log -1 --pretty=format:"%h")
+echo "Authur Name :" $(git log -1 --pretty=format:"%a")
